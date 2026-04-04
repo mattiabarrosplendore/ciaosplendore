@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mattia Barro — Sound</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Suisse+Int%27l+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0b;
+    --fg: #e8e4dc;
+    --muted: #6b6860;
+    --accent: #c8b89a;
+    --mono: 'Courier New', monospace;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--serif);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* custom cursor */
+  .cursor {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+  }
+
+  /* layout */
+  .page {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 48px 0 0;
+    border-bottom: 1px solid #222;
+    padding-bottom: 32px;
+  }
+
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .wordmark span {
+    color: var(--muted);
+  }
+
+  nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  nav a {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--fg); }
+
+  /* hero */
+  .hero {
+    padding: 120px 0 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: end;
+  }
+
+  .hero-title {
+    font-weight: 300;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-right {
+    padding-left: 60px;
+    border-left: 1px solid #222;
+  }
+
+  .hero-statement {
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  .hero-statement strong {
+    color: var(--fg);
+    font-weight: 400;
+  }
+
+  .contact-link {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+
+  .contact-link:hover { opacity: 0.6; }
+
+  /* divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 0 80px;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: #1e1e1c; }
+
+  .divider-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* services */
+  .services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #1a1a18;
+    margin-bottom: 120px;
+  }
+
+  .service {
+    background: var(--bg);
+    padding: 48px 40px;
+    transition: background 0.3s;
+  }
+
+  .service:hover { background: #111110; }
+
+  .service-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 32px;
+  }
+
+  .service-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--fg);
+  }
+
+  .service-title em { font-style: italic; color: var(--accent); }
+
+  .service-desc {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* credits */
+  .credits-section {
+    margin-bottom: 120px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #1e1e1c;
+  }
+
+  .credits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #1a1a18;
+  }
+
+  .credit-item {
+    background: var(--bg);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 20px;
+    transition: background 0.3s;
+  }
+
+  .credit-item:hover { background: #111110; }
+
+  .credit-name {
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-bottom: 6px;
+  }
+
+  .credit-role {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .credit-type {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* presence */
+  .presence-section {
+    margin-bottom: 120px;
+  }
+
+  .presence-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .presence-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid #222;
+    padding: 8px 16px;
+    transition: all 0.2s;
+  }
+
+  .presence-tag:hover {
+    color: var(--fg);
+    border-color: #444;
+  }
+
+  /* footer / contact */
+  footer {
+    border-top: 1px solid #1a1a18;
+    padding: 80px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .footer-cta {
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300;
+    line-height: 1.2;
+  }
+
+  .footer-cta em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .footer-right { }
+
+  .footer-email {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+  }
+
+  .footer-email:hover { color: var(--accent); }
+
+  .footer-note {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--fg); }
+
+  .footer-bottom {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid #1a1a18;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: #333;
+    text-transform: uppercase;
+  }
+
+  /* animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 2px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #333; }
+
+  @media (max-width: 768px) {
+    .page { padding: 0 24px; }
+    header { flex-direction: column; gap: 24px; }
+    .hero { grid-template-columns: 1fr; gap: 60px; }
+    .hero-right { padding-left: 0; border-left: none; border-top: 1px solid #222; padding-top: 40px; }
+    .services { grid-template-columns: 1fr; }
+    .credits-grid { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="page">
+
+  <header>
+    <div class="wordmark">Mattia Barro <span>/ SPLENDORE</span></div>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#radio">Radio</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left fade-up">
+      <h1 class="hero-title">
+        Sound<br>
+        <em>design</em><br>
+        & sonic<br>
+        identity
+      </h1>
+    </div>
+    <div class="hero-right fade-up">
+      <p class="hero-statement">
+        Mattia Barro is a Milan-based sound designer and artist working at the intersection of 
+        <strong>experimental music, institutional collaboration,</strong> and 
+        <strong>commercial sonic identity.</strong><br><br>
+        From gallery commissions to brand campaigns, he brings the same rigour: sound as a critical, 
+        deliberate act — not atmosphere, but argument.
+      </p>
+      <a class="contact-link" href="mailto:hello@mattiabarro.com">Get in touch ↗</a>
+    </div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-label">Services</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <section class="services fade-up" id="work">
+    <div class="service">
+      <span class="service-num">01</span>
+      <h3 class="service-title">Sonic<br><em>Branding</em></h3>
+      <p class="service-desc">Developing a coherent sound identity for brands, spaces, and campaigns. TV, cinema, digital — built for long-term recognition, not short-term texture.</p>
+    </div>
+    <div class="service">
+      <span class="service-num">02</span>
+      <h3 class="service-title">Institutional<br><em>Commission</em></h3>
+      <p class="service-desc">Sound design and curation for galleries, museums, and cultural institutions. Working in direct relationship with artworks, architectures, and ideas.</p>
+    </div>
+    <div class="service">
+      <span class="service-num">03</span>
+      <h3 class="service-title">Sound<br><em>Curation</em></h3>
+      <p class="service-desc">Curatorial programmes for hospitality, retail, and brand spaces. Not playlists — structured sonic environments designed to carry meaning over time.</p>
+    </div>
+  </section>
+
+  <section class="credits-section fade-up">
+    <div class="section-label">Selected credits</div>
+    <div class="credits-grid">
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Pinacoteca Agnelli</div>
+          <div class="credit-role">Sound selection & mix for Piotr Uklański, <em>Untitled (Dancing Canovas)</em></div>
+        </div>
+        <div class="credit-type">Institution</div>
+      </div>
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Timberland</div>
+          <div class="credit-role">Sound design, TV & digital campaign</div>
+        </div>
+        <div class="credit-type">Brand</div>
+      </div>
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Peep Project, Philadelphia</div>
+          <div class="credit-role">Sound installation (with Alice Visentin)</div>
+        </div>
+        <div class="credit-type">Exhibition</div>
+      </div>
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Intimissimi</div>
+          <div class="credit-role">Sound design, TV & digital campaign</div>
+        </div>
+        <div class="credit-type">Brand</div>
+      </div>
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Gió Marconi, Milan</div>
+          <div class="credit-role">Live performance & album presentation</div>
+        </div>
+        <div class="credit-type">Gallery</div>
+      </div>
+      <div class="credit-item">
+        <div>
+          <div class="credit-name">Leone Group</div>
+          <div class="credit-role">Sound design, cinema</div>
+        </div>
+        <div class="credit-type">Cinema</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="presence-section fade-up" id="radio">
+    <div class="section-label">Radio & curation</div>
+    <div class="presence-list">
+      <span class="presence-tag">NTS Radio</span>
+      <span class="presence-tag">Foundation.fm — London</span>
+      <span class="presence-tag">Radio AlHara — Bethlehem</span>
+      <span class="presence-tag">303 Room — Tokyo</span>
+      <span class="presence-tag">Res Radio — Vienna</span>
+      <span class="presence-tag">Radio Raheem — Milan</span>
+      <span class="presence-tag">Fritto.fm — Milan</span>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-cta fade-up">
+      Let's build<br>
+      something that<br>
+      <em>stays.</em>
+    </div>
+    <div class="footer-right fade-up">
+      <p class="footer-note">
+        Available for institutional commissions, brand campaigns, and long-term sonic identity projects. 
+        Based in Milan. Working internationally.
+      </p>
+      <a class="footer-email" href="mailto:hello@mattiabarro.com">hello@mattiabarro.com</a>
+      <div class="footer-links">
+        <a href="https://instagram.com/ciaosplendore" target="_blank">Instagram</a>
+        <a href="#" target="_blank">Rolling Stone Italia</a>
+      </div>
+    </div>
+    <div class="footer-bottom" style="grid-column: 1/-1;">
+      <span class="footer-copy">© 2026 Mattia Barro</span>
+      <span class="footer-copy">Milan, Italy — Working worldwide</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  // fade up on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // stagger children of services
+  document.querySelectorAll('.service, .credit-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 60}ms`;
+  });
+</script>
+</body>
+</html>
